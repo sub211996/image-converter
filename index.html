@@ -3,21 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image to JPG Studio</title>
+    <title>Image Studio</title>
     <style>
       :root {
-        color-scheme: light;
+        color-scheme: dark;
         --bg-1: #07111f;
-        --bg-2: #0f172a;
-        --panel: rgba(255, 255, 255, 0.9);
-        --panel-strong: rgba(255, 255, 255, 0.98);
-        --line: rgba(148, 163, 184, 0.18);
-        --text: #0f172a;
-        --muted: #5b6473;
-        --accent: #0f766e;
-        --accent-2: #2563eb;
-        --accent-3: #f59e0b;
-        --shadow: 0 28px 90px rgba(15, 23, 42, 0.26);
+        --bg-2: #0c1629;
+        --bg-3: #111827;
+        --glass: rgba(255, 255, 255, 0.1);
+        --glass-strong: rgba(255, 255, 255, 0.16);
+        --line: rgba(255, 255, 255, 0.14);
+        --line-soft: rgba(255, 255, 255, 0.08);
+        --text: #eef6ff;
+        --muted: rgba(238, 246, 255, 0.72);
+        --muted-strong: rgba(238, 246, 255, 0.88);
+        --accent: #7dd3fc;
+        --accent-2: #5eead4;
+        --accent-3: #fbbf24;
+        --shadow: 0 30px 90px rgba(2, 6, 23, 0.42);
+        --inner:
+          inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.06);
       }
 
       * {
@@ -31,20 +37,49 @@
 
       body {
         margin: 0;
+        padding: 24px;
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
           "Segoe UI", sans-serif;
         background:
-          radial-gradient(circle at top left, rgba(37, 99, 235, 0.34), transparent 30%),
-          radial-gradient(circle at 85% 12%, rgba(245, 158, 11, 0.22), transparent 20%),
-          radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.2), transparent 28%),
-          linear-gradient(160deg, var(--bg-1), var(--bg-2) 58%, #111827);
+          radial-gradient(circle at 12% 12%, rgba(125, 211, 252, 0.24), transparent 20%),
+          radial-gradient(circle at 88% 18%, rgba(251, 191, 36, 0.15), transparent 16%),
+          radial-gradient(circle at 78% 82%, rgba(94, 234, 212, 0.16), transparent 22%),
+          linear-gradient(160deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
         color: var(--text);
-        padding: 24px;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        pointer-events: none;
+        z-index: 0;
+        filter: blur(12px);
+      }
+
+      body::before {
+        width: 380px;
+        height: 380px;
+        left: -120px;
+        top: 40px;
+        background: radial-gradient(circle, rgba(96, 165, 250, 0.2), transparent 68%);
+      }
+
+      body::after {
+        width: 440px;
+        height: 440px;
+        right: -120px;
+        bottom: -110px;
+        background: radial-gradient(circle, rgba(94, 234, 212, 0.16), transparent 68%);
       }
 
       .shell {
         width: min(1180px, 100%);
         margin: 0 auto;
+        position: relative;
+        z-index: 1;
       }
 
       .hero {
@@ -57,37 +92,60 @@
 
       .hero-card,
       .side-card,
-      .main-card {
+      .main-card,
+      .glass-chip,
+      .file-card {
         border: 1px solid var(--line);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
         box-shadow: var(--shadow);
-        backdrop-filter: blur(16px);
       }
 
       .hero-card {
-        padding: 28px;
-        border-radius: 28px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9));
+        padding: 30px;
+        border-radius: 34px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08)),
+          rgba(6, 11, 25, 0.42);
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.22),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero-card::after,
+      .main-card::after,
+      .side-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(140deg, rgba(255, 255, 255, 0.08), transparent 30%);
+        pointer-events: none;
       }
 
       .eyebrow {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 8px 12px;
+        padding: 9px 14px;
         border-radius: 999px;
-        background: rgba(15, 118, 110, 0.1);
-        color: var(--accent);
+        background: rgba(255, 255, 255, 0.1);
+        color: #eef6ff;
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        box-shadow: var(--inner);
       }
 
       h1 {
         margin: 16px 0 12px;
-        font-size: clamp(2.2rem, 5vw, 4.5rem);
+        font-size: clamp(2.2rem, 5vw, 4.6rem);
         line-height: 0.96;
-        letter-spacing: -0.04em;
+        letter-spacing: -0.05em;
       }
 
       .lede {
@@ -100,16 +158,24 @@
 
       .side-card {
         padding: 22px;
-        border-radius: 24px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.84));
+        border-radius: 30px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.08)),
+          rgba(6, 11, 25, 0.36);
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+        position: relative;
+        overflow: hidden;
       }
 
       .side-title {
         margin: 0 0 12px;
-        font-size: 0.92rem;
+        font-size: 0.9rem;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: var(--muted);
+        color: rgba(238, 246, 255, 0.66);
       }
 
       .stats {
@@ -120,14 +186,18 @@
       .stat {
         padding: 14px;
         border-radius: 18px;
-        background: rgba(15, 23, 42, 0.04);
-        border: 1px solid rgba(148, 163, 184, 0.16);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)),
+          rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: var(--inner);
       }
 
       .stat strong {
         display: block;
         margin-bottom: 4px;
         font-size: 1rem;
+        color: #f8fbff;
       }
 
       .stat span {
@@ -139,8 +209,16 @@
       .main-card {
         margin-top: 18px;
         padding: 22px;
-        border-radius: 28px;
-        background: rgba(255, 255, 255, 0.94);
+        border-radius: 34px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06)),
+          rgba(6, 11, 25, 0.4);
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.16),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+        position: relative;
+        overflow: hidden;
       }
 
       .controls {
@@ -151,22 +229,42 @@
 
       .dropzone {
         position: relative;
-        border-radius: 24px;
-        border: 1.5px dashed rgba(15, 118, 110, 0.24);
+        min-height: 300px;
+        padding: 22px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
         background:
-          linear-gradient(180deg, rgba(15, 118, 110, 0.05), rgba(37, 99, 235, 0.03)),
-          rgba(255, 255, 255, 0.8);
-        padding: 20px;
-        min-height: 280px;
-        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+          linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05)),
+          rgba(8, 15, 32, 0.34);
+        box-shadow:
+          var(--shadow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.16),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+        transition:
+          transform 0.2s ease,
+          border-color 0.2s ease,
+          box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .dropzone::before {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        pointer-events: none;
       }
 
       .dropzone.is-dragover {
-        transform: scale(1.005);
-        border-color: rgba(37, 99, 235, 0.45);
+        transform: scale(1.01);
+        border-color: rgba(125, 211, 252, 0.42);
         background:
-          linear-gradient(180deg, rgba(37, 99, 235, 0.08), rgba(15, 118, 110, 0.07)),
-          white;
+          linear-gradient(180deg, rgba(125, 211, 252, 0.14), rgba(94, 234, 212, 0.09)),
+          rgba(8, 15, 32, 0.4);
+        box-shadow:
+          0 30px 80px rgba(2, 6, 23, 0.44),
+          inset 0 1px 0 rgba(255, 255, 255, 0.18);
       }
 
       .dropzone-top {
@@ -180,12 +278,76 @@
       .dropzone-top strong {
         display: block;
         font-size: 1.15rem;
+        color: #f8fbff;
       }
 
       .dropzone-top p {
         margin: 6px 0 0;
         color: var(--muted);
         line-height: 1.55;
+      }
+
+      .upload-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-top: 14px;
+      }
+
+      .upload-button {
+        width: auto;
+        min-width: 180px;
+        padding: 14px 18px;
+        border: 0;
+        border-radius: 18px;
+        background:
+          linear-gradient(135deg, rgba(125, 211, 252, 0.98), rgba(94, 234, 212, 0.94));
+        color: #06101d;
+        font-size: 0.98rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow:
+          0 18px 34px rgba(2, 6, 23, 0.24),
+          inset 0 1px 0 rgba(255, 255, 255, 0.38);
+      }
+
+      .upload-summary {
+        color: rgba(238, 246, 255, 0.76);
+        font-size: 0.92rem;
+      }
+
+      .field-group {
+        display: grid;
+        gap: 10px;
+      }
+
+      .field-label {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #f6fbff;
+      }
+
+      .select-field {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.1);
+        color: #f8fbff;
+        font: inherit;
+        outline: none;
+        box-shadow: var(--inner);
+        backdrop-filter: blur(18px);
+      }
+
+      .select-field option {
+        color: #0f172a;
+      }
+
+      .select-field:focus {
+        border-color: rgba(125, 211, 252, 0.42);
+        box-shadow: 0 0 0 4px rgba(125, 211, 252, 0.12), var(--inner);
       }
 
       .tag-row {
@@ -195,22 +357,22 @@
         margin-top: 14px;
       }
 
+      .glass-chip,
+      .tag {
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(238, 246, 255, 0.82);
+        font-size: 0.82rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: var(--inner);
+      }
+
       .tag {
         padding: 7px 10px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.05);
-        color: var(--muted);
-        font-size: 0.82rem;
-        border: 1px solid rgba(148, 163, 184, 0.15);
       }
 
       input[type="file"] {
-        width: 100%;
-        margin-top: 14px;
-        padding: 14px;
-        border-radius: 18px;
-        border: 1px solid rgba(148, 163, 184, 0.22);
-        background: white;
+        display: none;
       }
 
       .primary-actions {
@@ -233,14 +395,20 @@
         width: 100%;
         padding: 14px 16px;
         border: 0;
-        border-radius: 16px;
-        color: white;
+        border-radius: 18px;
+        color: #eff8ff;
         font-size: 0.98rem;
         font-weight: 800;
         cursor: pointer;
         text-decoration: none;
-        transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
-        box-shadow: 0 16px 34px rgba(15, 118, 110, 0.24);
+        transition:
+          transform 0.16s ease,
+          box-shadow 0.16s ease,
+          opacity 0.16s ease,
+          background 0.16s ease;
+        box-shadow:
+          0 18px 34px rgba(2, 6, 23, 0.24),
+          inset 0 1px 0 rgba(255, 255, 255, 0.16);
       }
 
       button:hover,
@@ -251,25 +419,26 @@
       button:disabled,
       a.button-link[aria-disabled="true"] {
         cursor: not-allowed;
-        opacity: 0.7;
+        opacity: 0.72;
         transform: none;
       }
 
       .btn-primary {
-        background: linear-gradient(135deg, var(--accent), #0f5f77);
+        background: linear-gradient(135deg, rgba(125, 211, 252, 0.96), rgba(37, 99, 235, 0.9));
       }
 
       .btn-secondary {
-        background: linear-gradient(135deg, var(--accent-2), #1d4ed8);
+        background: linear-gradient(135deg, rgba(94, 234, 212, 0.96), rgba(15, 118, 110, 0.92));
+        color: #06101d;
       }
 
       .btn-ghost {
-        background: linear-gradient(135deg, #334155, #1f2937);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.08));
       }
 
       .status {
         min-height: 22px;
-        color: var(--muted);
+        color: rgba(238, 246, 255, 0.72);
         font-size: 0.95rem;
       }
 
@@ -277,8 +446,10 @@
         width: 100%;
         height: 12px;
         border-radius: 999px;
-        background: rgba(148, 163, 184, 0.18);
+        background: rgba(255, 255, 255, 0.1);
         overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: var(--inner);
       }
 
       .progress-bar {
@@ -317,10 +488,14 @@
       .file-card {
         position: relative;
         overflow: hidden;
-        border-radius: 20px;
-        background: white;
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)),
+          rgba(7, 13, 28, 0.36);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow:
+          0 18px 36px rgba(2, 6, 23, 0.24),
+          inset 0 1px 0 rgba(255, 255, 255, 0.16);
       }
 
       .file-card .thumb {
@@ -328,7 +503,7 @@
         width: 100%;
         display: block;
         object-fit: cover;
-        background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+        background: linear-gradient(135deg, rgba(148, 163, 184, 0.28), rgba(255, 255, 255, 0.08));
       }
 
       .file-meta {
@@ -341,12 +516,13 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        color: #f6fbff;
       }
 
       .file-meta span {
         display: block;
         margin-top: 4px;
-        color: var(--muted);
+        color: rgba(238, 246, 255, 0.68);
         font-size: 0.84rem;
       }
 
@@ -354,26 +530,47 @@
         display: grid;
         gap: 10px;
         padding: 16px;
-        border-radius: 20px;
-        background: rgba(15, 23, 42, 0.04);
-        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 24px;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06)),
+          rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: var(--inner);
       }
 
       .summary-row {
         display: flex;
         justify-content: space-between;
         gap: 10px;
-        color: var(--muted);
+        color: rgba(238, 246, 255, 0.72);
         font-size: 0.92rem;
       }
 
       .summary-row strong {
-        color: var(--text);
+        color: #f8fbff;
       }
 
       .download-note {
         font-size: 0.9rem;
-        color: var(--muted);
+        color: rgba(238, 246, 255, 0.72);
+      }
+
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .preview-header strong {
+        font-size: 1rem;
+        color: #f8fbff;
+      }
+
+      .preview-header span {
+        color: rgba(238, 246, 255, 0.62);
+        font-size: 0.9rem;
       }
 
       @media (max-width: 920px) {
@@ -391,11 +588,19 @@
         .hero-card,
         .main-card,
         .side-card {
-          border-radius: 22px;
+          border-radius: 24px;
         }
 
         .button-row {
           grid-template-columns: 1fr;
+        }
+
+        .upload-row {
+          align-items: stretch;
+        }
+
+        .upload-button {
+          width: 100%;
         }
       }
     </style>
@@ -404,29 +609,28 @@
     <main class="shell">
       <section class="hero">
         <div class="hero-card">
-          <span class="eyebrow">Image converter</span>
-          <h1>Convert images to JPG with a polished batch workflow</h1>
+          <span class="eyebrow">Image Studio</span>
+          <h1>Glassmorphism conversion with calm, tactile depth</h1>
           <p class="lede">
-            Drop in one file or a whole set of photos. The app previews your selection,
-            converts common image formats and camera RAW files, and gives you a single JPG
-            or a ZIP when you upload multiple files.
+            Drop in one file or a whole set of photos. Preview everything first, choose the
+            output format, and download a single file or a ZIP in one smooth flow.
           </p>
         </div>
 
         <aside class="side-card">
-          <h2 class="side-title">What it handles</h2>
+          <h2 class="side-title">Experience</h2>
           <div class="stats">
             <div class="stat">
-              <strong>Multiple files</strong>
-              <span>Select several images at once and download the results as a ZIP.</span>
+              <strong>Soft surfaces</strong>
+              <span>Layered glass panels, subtle borders, and a quiet glow.</span>
             </div>
             <div class="stat">
-              <strong>Preview first</strong>
-              <span>See thumbnails instantly before you convert anything.</span>
+              <strong>Clear actions</strong>
+              <span>One place to select files, choose format, and convert.</span>
             </div>
             <div class="stat">
-              <strong>Privacy-first</strong>
-              <span>Files are processed in memory and are not kept on disk.</span>
+              <strong>Batch ready</strong>
+              <span>Multiple files convert together and download as a ZIP.</span>
             </div>
           </div>
         </aside>
@@ -439,8 +643,7 @@
               <div>
                 <strong>Choose files</strong>
                 <p>
-                  Add JPG, PNG, WebP, GIF, BMP, TIFF, HEIC, AVIF, and supported RAW files
-                  to convert them into JPG.
+                  Add JPG, PNG, WebP, GIF, BMP, TIFF, HEIC, AVIF, and supported RAW files.
                 </p>
               </div>
             </div>
@@ -451,6 +654,11 @@
               multiple
               accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.tif,.tiff,.heic,.heif,.avif,.ico,.jp2,.j2k,.jpf,.jpx,.ppm,.pgm,.pbm,.pnm,.cr2,.cr3,.rw2,.nef,.arw,.sr2,.orf,.pef,.raf,.raw,.dng,.x3f,.kdc,.mos,.mrw,.srw,image/*"
             />
+
+            <div class="upload-row">
+              <button class="upload-button" id="browseBtn" type="button">Browse files</button>
+              <span class="upload-summary" id="uploadSummary">No files selected</span>
+            </div>
 
             <div class="tag-row" aria-label="Supported formats">
               <span class="tag">JPG</span>
@@ -469,10 +677,20 @@
 
           <div class="workspace">
             <div class="primary-actions">
+              <div class="field-group">
+                <label class="field-label" for="outputFormat">Output format</label>
+                <select id="outputFormat" class="select-field">
+                  <option value="jpg">JPG</option>
+                  <option value="png">PNG</option>
+                  <option value="webp">WEBP</option>
+                </select>
+              </div>
+
               <div class="button-row">
                 <button class="btn-primary" id="convertBtn">Convert</button>
                 <button class="btn-ghost" id="clearBtn" type="button">Clear</button>
               </div>
+
               <a id="downloadBtn" class="button-link btn-secondary" aria-disabled="true" href="#">
                 Download result
               </a>
@@ -494,14 +712,17 @@
               </div>
               <div class="summary-row">
                 <span>Output</span>
-                <strong id="outputLabel">JPG or ZIP</strong>
+                <strong id="outputLabel">JPG</strong>
               </div>
             </div>
           </div>
         </div>
 
         <section style="margin-top: 18px">
-          <div class="side-title">Preview</div>
+          <div class="preview-header">
+            <strong>Preview</strong>
+            <span id="previewCaption">Selected files appear here</span>
+          </div>
           <div class="preview-grid" id="previewGrid"></div>
         </section>
       </section>
@@ -509,12 +730,16 @@
 
     <script>
       const fileInput = document.getElementById("fileInput");
+      const browseBtn = document.getElementById("browseBtn");
       const dropzone = document.getElementById("dropzone");
       const previewGrid = document.getElementById("previewGrid");
       const fileHint = document.getElementById("fileHint");
+      const uploadSummary = document.getElementById("uploadSummary");
+      const previewCaption = document.getElementById("previewCaption");
       const selectedCount = document.getElementById("selectedCount");
       const modeLabel = document.getElementById("modeLabel");
       const outputLabel = document.getElementById("outputLabel");
+      const outputFormat = document.getElementById("outputFormat");
       const convertBtn = document.getElementById("convertBtn");
       const clearBtn = document.getElementById("clearBtn");
       const downloadBtn = document.getElementById("downloadBtn");
@@ -556,13 +781,21 @@
         previewGrid.innerHTML = "";
         selectedCount.textContent = String(files.length);
         modeLabel.textContent = files.length > 1 ? "Batch" : files.length === 1 ? "Single" : "Waiting";
-        outputLabel.textContent = files.length > 1 ? "ZIP" : "JPG";
+        outputLabel.textContent = outputFormat.value.toUpperCase();
         fileHint.textContent =
           files.length > 0
             ? `${files.length} file${files.length === 1 ? "" : "s"} ready to convert.`
             : "No files selected yet.";
+        uploadSummary.textContent =
+          files.length > 0
+            ? `${files.length} file${files.length === 1 ? "" : "s"} selected`
+            : "No files selected";
+        previewCaption.textContent =
+          files.length > 0
+            ? `${files.length} file${files.length === 1 ? "" : "s"} loaded`
+            : "Selected files appear here";
 
-        files.forEach((file, index) => {
+        files.forEach((file) => {
           const url = URL.createObjectURL(file);
           objectUrls.push(url);
 
@@ -589,6 +822,19 @@
 
       fileInput.addEventListener("change", (event) => {
         handleFiles(event.target.files);
+      });
+
+      browseBtn.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      outputFormat.addEventListener("change", () => {
+        const files = Array.from(fileInput.files || []);
+        outputLabel.textContent = outputFormat.value.toUpperCase();
+        if (files.length) {
+          renderPreview(files);
+          statusEl.textContent = `Output format set to ${outputFormat.value.toUpperCase()}.`;
+        }
       });
 
       clearBtn.addEventListener("click", () => {
@@ -632,15 +878,13 @@
 
         const formData = new FormData();
         files.forEach((file) => formData.append("files", file, file.name));
+        formData.append("format", outputFormat.value);
 
         convertBtn.disabled = true;
         clearBtn.disabled = true;
         resetDownloadLink();
         setProgress(8, false);
-        statusEl.textContent =
-          files.length > 1
-            ? `Uploading ${files.length} files...`
-            : "Uploading file...";
+        statusEl.textContent = files.length > 1 ? `Uploading ${files.length} files...` : "Uploading file...";
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "/convert", true);
@@ -673,15 +917,15 @@
             const contentType = xhr.getResponseHeader("Content-Type") || "";
             const filename =
               contentType.includes("zip") || files.length > 1
-                ? "converted-images.zip"
-                : `${files[0].name.replace(/\.[^.]+$/, "")}.jpg`;
+                ? `converted-images-${outputFormat.value}.zip`
+                : `${files[0].name.replace(/\.[^.]+$/, "")}.${outputFormat.value}`;
 
             setDownloadLink(blob, filename);
             setProgress(100, false);
             statusEl.textContent =
               files.length > 1
-                ? "Your ZIP is ready to download."
-                : "Your JPG is ready to download.";
+                ? `Your ${outputFormat.value.toUpperCase()} ZIP is ready to download.`
+                : `Your ${outputFormat.value.toUpperCase()} file is ready to download.`;
           } else {
             const reader = new FileReader();
             reader.onload = () => {
@@ -708,6 +952,7 @@
       convertBtn.addEventListener("click", convertFiles);
 
       handleFiles([]);
+      outputLabel.textContent = outputFormat.value.toUpperCase();
       resetDownloadLink();
     </script>
   </body>

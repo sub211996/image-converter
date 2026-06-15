@@ -72,6 +72,12 @@ IMAGE_EXTENSIONS = {
 
 ALLOWED_EXTENSIONS = RAW_EXTENSIONS | IMAGE_EXTENSIONS
 
+OUTPUT_FORMATS = {
+    "jpg": {"extension": "jpg", "mime": "image/jpeg", "pil_format": "JPEG"},
+    "png": {"extension": "png", "mime": "image/png", "pil_format": "PNG"},
+    "webp": {"extension": "webp", "mime": "image/webp", "pil_format": "WEBP"},
+}
+
 
 def _extension(filename: str) -> str:
     return Path(filename.lower()).suffix
@@ -87,20 +93,7 @@ def _is_raw_file(filename: str) -> bool:
 
 def _load_rgb_from_standard_image(file_bytes: bytes) -> Image.Image:
     image = Image.open(io.BytesIO(file_bytes))
-    image = ImageOps.exif_transpose(image)
-
-    if image.mode in {"RGBA", "LA", "P"}:
-        # Flatten images with transparency onto white so they save cleanly as JPEG.
-        base = Image.new("RGB", image.size, "white")
-        if image.mode == "P":
-            image = image.convert("RGBA")
-        alpha = image.getchannel("A") if "A" in image.getbands() else None
-        if alpha is not None:
-            base.paste(image.convert("RGBA"), mask=alpha)
-            return base
-        return image.convert("RGB")
-
-    return image.convert("RGB")
+    return ImageOps.exif_transpose(image)
 
 
 def _load_rgb_from_raw(file_bytes: bytes, suffix: str) -> Image.Image:
@@ -121,7 +114,31 @@ def _load_rgb_from_raw(file_bytes: bytes, suffix: str) -> Image.Image:
     return Image.fromarray(rgb)
 
 
-def _convert_upload_to_jpeg(uploaded_file) -> tuple[str, bytes]:
+def _prepare_image_for_output(image: Image.Image, output_format: str) -> Image.Image:
+    if output_format == "jpg":
+        if image.mode in {"RGBA", "LA", "P"}:
+            base = Image.new("RGB", image.size, "white")
+            if image.mode == "P":
+                image = image.convert("RGBA")
+            alpha = image.getchannel("A") if "A" in image.getbands() else None
+            if alpha is not None:
+                base.paste(image.convert("RGBA"), mask=alpha)
+                return base
+        return image.convert("RGB")
+
+    if image.mode == "P":
+        return image.convert("RGBA")
+
+    if image.mode in {"LA", "RGBA"}:
+        return image.convert("RGBA")
+
+    if image.mode not in {"RGB", "RGBA"}:
+        return image.convert("RGB")
+
+    return image
+
+
+def _convert_upload(uploaded_file, output_format: str) -> tuple[str, bytes]:
     filename = secure_filename(uploaded_file.filename or "image")
     suffix = _extension(filename)
     file_bytes = uploaded_file.read()
@@ -131,8 +148,17 @@ def _convert_upload_to_jpeg(uploaded_file) -> tuple[str, bytes]:
     else:
         image = _load_rgb_from_standard_image(file_bytes)
 
+    output_format_info = OUTPUT_FORMATS[output_format]
+    image = _prepare_image_for_output(image, output_format)
     output = io.BytesIO()
-    image.save(output, format="JPEG", quality=95, optimize=True, progressive=True)
+    save_kwargs = {}
+
+    if output_format == "jpg":
+        save_kwargs = {"quality": 95, "optimize": True, "progressive": True}
+    elif output_format == "webp":
+        save_kwargs = {"quality": 95, "method": 6}
+
+    image.save(output, format=output_format_info["pil_format"], **save_kwargs)
     return filename, output.getvalue()
 
 
@@ -160,6 +186,10 @@ def convert_files() -> Response:
     if not valid_files:
         return Response("No valid files uploaded.", status=400)
 
+    output_format = request.form.get("format", "jpg").lower().strip()
+    if output_format not in OUTPUT_FORMATS:
+        return Response("Unsupported output format.", status=400)
+
     converted: list[tuple[str, bytes]] = []
     for uploaded in valid_files:
         if not _is_allowed_file(uploaded.filename):
@@ -169,33 +199,35 @@ def convert_files() -> Response:
             )
 
         try:
-            converted.append(_convert_upload_to_jpeg(uploaded))
+            converted.append(_convert_upload(uploaded, output_format))
         except Exception as exc:  # pragma: no cover
             return Response(f"Could not convert {uploaded.filename}: {exc}", status=400)
 
     if len(converted) == 1:
-        original_name, jpeg_bytes = converted[0]
-        output = io.BytesIO(jpeg_bytes)
+        original_name, converted_bytes = converted[0]
+        output = io.BytesIO(converted_bytes)
         jpg_name = Path(original_name).stem or "converted-image"
+        extension = OUTPUT_FORMATS[output_format]["extension"]
         return send_file(
             output,
-            mimetype="image/jpeg",
+            mimetype=OUTPUT_FORMATS[output_format]["mime"],
             as_attachment=True,
-            download_name=f"{jpg_name}.jpg",
+            download_name=f"{jpg_name}.{extension}",
         )
 
     archive = io.BytesIO()
     with zipfile.ZipFile(archive, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
-        for original_name, jpeg_bytes in converted:
-            jpg_name = f"{Path(original_name).stem or 'image'}.jpg"
-            zf.writestr(jpg_name, jpeg_bytes)
+        extension = OUTPUT_FORMATS[output_format]["extension"]
+        for original_name, converted_bytes in converted:
+            file_name = f"{Path(original_name).stem or 'image'}.{extension}"
+            zf.writestr(file_name, converted_bytes)
 
     archive.seek(0)
     return send_file(
         archive,
         mimetype="application/zip",
         as_attachment=True,
-        download_name="converted-images.zip",
+        download_name=f"converted-images-{output_format}.zip",
     )
 
 
