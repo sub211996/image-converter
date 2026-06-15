@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAW to JPG Converter</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0f172a;
+        --panel: rgba(255, 255, 255, 0.94);
+        --panel-border: rgba(148, 163, 184, 0.25);
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #0f766e;
+        --accent-strong: #115e59;
+        --shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background:
+          radial-gradient(circle at top left, rgba(20, 184, 166, 0.35), transparent 34%),
+          radial-gradient(circle at top right, rgba(59, 130, 246, 0.24), transparent 28%),
+          linear-gradient(160deg, #020617, #0f172a 48%, #111827);
+        color: var(--text);
+      }
+
+      .container {
+        width: min(760px, 100%);
+        padding: 28px;
+        border-radius: 24px;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+      }
+
+      .eyebrow {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(15, 118, 110, 0.1);
+        color: var(--accent-strong);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 16px 0 10px;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 1;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 24px;
+        margin-top: 28px;
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+      }
+
+      .dropzone {
+        border: 2px dashed rgba(17, 94, 89, 0.22);
+        border-radius: 20px;
+        padding: 22px;
+        background: rgba(15, 118, 110, 0.05);
+      }
+
+      .dropzone strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .dropzone small {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+      }
+
+      input[type="file"] {
+        width: 100%;
+        margin-top: 14px;
+      }
+
+      button,
+      a.button-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-top: 14px;
+        padding: 13px 16px;
+        border: 0;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        box-shadow: 0 14px 30px rgba(15, 118, 110, 0.28);
+      }
+
+      button:hover,
+      a.button-link:hover {
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .preview-wrap {
+        display: grid;
+        gap: 14px;
+      }
+
+      img {
+        width: 100%;
+        display: none;
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        background: white;
+      }
+
+      .status {
+        min-height: 22px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .hint-list {
+        margin: 16px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .download-btn {
+        display: none;
+      }
+
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <span class="eyebrow">RAW to JPG</span>
+      <h1>Convert camera RAW files to JPG</h1>
+      <p>
+        Upload CR2, RW2, NEF, ARW, SR2, ORF, PEF, RAF, or RAW files and convert them
+        into a downloadable JPG using Python.
+      </p>
+
+      <section class="grid">
+        <div class="card">
+          <div class="dropzone">
+            <strong>Select a RAW photo</strong>
+            <p>Choose one camera file from your device and convert it on the server.</p>
+            <input
+              type="file"
+              id="imageInput"
+              accept=".cr2,.rw2,.nef,.arw,.sr2,.orf,.pef,.raf,.raw,image/*"
+            />
+            <small>Supported RAW examples: CR2, RW2, NEF, ARW, SR2, ORF, PEF, RAF, RAW.</small>
+          </div>
+
+          <button id="convertBtn">Convert to JPG</button>
+          <div class="status" id="status"></div>
+          <a id="downloadBtn" class="button-link download-btn" download="converted-image.jpg">
+            Download JPG
+          </a>
+        </div>
+
+        <div class="card preview-wrap">
+          <strong>Preview</strong>
+          <img id="preview" alt="Converted JPG preview" />
+          <p>
+            After conversion, the JPG appears here so you can confirm the result before
+            downloading.
+          </p>
+          <ul class="hint-list">
+            <li>Python handles the RAW decoding.</li>
+            <li>The browser only uploads the file and downloads the JPG.</li>
+            <li>This works as a small local web app or on a server.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const imageInput = document.getElementById("imageInput");
+      const convertBtn = document.getElementById("convertBtn");
+      const preview = document.getElementById("preview");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const statusEl = document.getElementById("status");
+
+      convertBtn.addEventListener("click", async () => {
+        const file = imageInput.files[0];
+
+        if (!file) {
+          statusEl.textContent = "Please select a RAW image first.";
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        convertBtn.disabled = true;
+        statusEl.textContent = "Converting...";
+        downloadBtn.style.display = "none";
+        preview.style.display = "none";
+
+        try {
+          const response = await fetch("/convert", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const message = await response.text();
+            throw new Error(message || "Conversion failed.");
+          }
+
+          const blob = await response.blob();
+          const objectUrl = URL.createObjectURL(blob);
+
+          preview.src = objectUrl;
+          preview.style.display = "block";
+          downloadBtn.href = objectUrl;
+          downloadBtn.download = "converted-image.jpg";
+          downloadBtn.style.display = "inline-flex";
+          statusEl.textContent = "Conversion complete.";
+        } catch (error) {
+          statusEl.textContent = error.message || "Something went wrong.";
+        } finally {
+          convertBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
