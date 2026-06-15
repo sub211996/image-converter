@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image Studio</title>
+    <title>Format Forge</title>
     <style>
       :root {
         color-scheme: dark;
@@ -609,28 +609,28 @@
     <main class="shell">
       <section class="hero">
         <div class="hero-card">
-          <span class="eyebrow">Image Studio</span>
-          <h1>Glassmorphism conversion with calm, tactile depth</h1>
+          <span class="eyebrow">Format Forge</span>
+          <h1>Convert images with a premium batch workflow</h1>
           <p class="lede">
-            Drop in one file or a whole set of photos. Preview everything first, choose the
-            output format, and download a single file or a ZIP in one smooth flow.
+            Upload one file or a full batch, review thumbnails instantly, choose the output
+            format, and export a single file or ZIP without leaving the page.
           </p>
         </div>
 
         <aside class="side-card">
-          <h2 class="side-title">Experience</h2>
+          <h2 class="side-title">What it does</h2>
           <div class="stats">
             <div class="stat">
-              <strong>Soft surfaces</strong>
-              <span>Layered glass panels, subtle borders, and a quiet glow.</span>
+              <strong>Fast preview</strong>
+              <span>See each image before conversion so nothing is a surprise.</span>
             </div>
             <div class="stat">
-              <strong>Clear actions</strong>
-              <span>One place to select files, choose format, and convert.</span>
+              <strong>Format control</strong>
+              <span>Pick JPG, PNG, or WEBP as the output for every upload.</span>
             </div>
             <div class="stat">
-              <strong>Batch ready</strong>
-              <span>Multiple files convert together and download as a ZIP.</span>
+              <strong>Batch export</strong>
+              <span>Convert multiple files together and download them in one ZIP.</span>
             </div>
           </div>
         </aside>
@@ -641,7 +641,7 @@
           <div class="dropzone" id="dropzone">
             <div class="dropzone-top">
               <div>
-                <strong>Choose files</strong>
+                <strong>Upload files</strong>
                 <p>
                   Add JPG, PNG, WebP, GIF, BMP, TIFF, HEIC, AVIF, and supported RAW files.
                 </p>
@@ -656,7 +656,7 @@
             />
 
             <div class="upload-row">
-              <button class="upload-button" id="browseBtn" type="button">Browse files</button>
+              <button class="upload-button" id="browseBtn" type="button">Add files</button>
               <span class="upload-summary" id="uploadSummary">No files selected</span>
             </div>
 
@@ -672,13 +672,13 @@
               <span class="tag">RAW</span>
             </div>
 
-            <p class="download-note" id="fileHint">No files selected yet.</p>
+            <p class="download-note" id="fileHint">Upload files to see them here.</p>
           </div>
 
           <div class="workspace">
             <div class="primary-actions">
               <div class="field-group">
-                <label class="field-label" for="outputFormat">Output format</label>
+                <label class="field-label" for="outputFormat">Export format</label>
                 <select id="outputFormat" class="select-field">
                   <option value="jpg">JPG</option>
                   <option value="png">PNG</option>
@@ -687,31 +687,31 @@
               </div>
 
               <div class="button-row">
-                <button class="btn-primary" id="convertBtn">Convert</button>
-                <button class="btn-ghost" id="clearBtn" type="button">Clear</button>
+                <button class="btn-primary" id="convertBtn">Start conversion</button>
+                <button class="btn-ghost" id="clearBtn" type="button">Reset</button>
               </div>
 
               <a id="downloadBtn" class="button-link btn-secondary" aria-disabled="true" href="#">
-                Download result
+                Download export
               </a>
             </div>
 
             <div class="progress" id="progressWrap" aria-label="Conversion progress">
               <div class="progress-bar" id="progressBar"></div>
             </div>
-            <div class="status" id="status">Ready when you are.</div>
+            <div class="status" id="status">Upload files to begin.</div>
 
             <div class="summary" id="summary">
               <div class="summary-row">
-                <span>Files selected</span>
+                <span>Selected</span>
                 <strong id="selectedCount">0</strong>
               </div>
               <div class="summary-row">
                 <span>Mode</span>
-                <strong id="modeLabel">Waiting</strong>
+                <strong id="modeLabel">Idle</strong>
               </div>
               <div class="summary-row">
-                <span>Output</span>
+                <span>Export</span>
                 <strong id="outputLabel">JPG</strong>
               </div>
             </div>
@@ -720,8 +720,8 @@
 
         <section style="margin-top: 18px">
           <div class="preview-header">
-            <strong>Preview</strong>
-            <span id="previewCaption">Selected files appear here</span>
+            <strong>Live preview</strong>
+            <span id="previewCaption">Selected files will appear here</span>
           </div>
           <div class="preview-grid" id="previewGrid"></div>
         </section>
@@ -780,7 +780,7 @@
         revokePreviews();
         previewGrid.innerHTML = "";
         selectedCount.textContent = String(files.length);
-        modeLabel.textContent = files.length > 1 ? "Batch" : files.length === 1 ? "Single" : "Waiting";
+        modeLabel.textContent = files.length > 1 ? "Batch" : files.length === 1 ? "Single" : "Idle";
         outputLabel.textContent = outputFormat.value.toUpperCase();
         fileHint.textContent =
           files.length > 0
@@ -793,7 +793,7 @@
         previewCaption.textContent =
           files.length > 0
             ? `${files.length} file${files.length === 1 ? "" : "s"} loaded`
-            : "Selected files appear here";
+            : "Selected files will appear here";
 
         files.forEach((file) => {
           const url = URL.createObjectURL(file);
@@ -817,7 +817,7 @@
         renderPreview(list);
         resetDownloadLink();
         setProgress(0, false);
-        statusEl.textContent = list.length ? "Files loaded. Ready to convert." : "Ready when you are.";
+        statusEl.textContent = list.length ? "Files loaded and ready for export." : "Upload files to begin.";
       }
 
       fileInput.addEventListener("change", (event) => {
@@ -833,7 +833,7 @@
         outputLabel.textContent = outputFormat.value.toUpperCase();
         if (files.length) {
           renderPreview(files);
-          statusEl.textContent = `Output format set to ${outputFormat.value.toUpperCase()}.`;
+          statusEl.textContent = `Export format set to ${outputFormat.value.toUpperCase()}.`;
         }
       });
 
@@ -872,7 +872,7 @@
       function convertFiles() {
         const files = Array.from(fileInput.files || []);
         if (!files.length) {
-          statusEl.textContent = "Please choose at least one file.";
+          statusEl.textContent = "Please choose at least one file to continue.";
           return;
         }
 
@@ -907,7 +907,7 @@
         xhr.onreadystatechange = () => {
           if (xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED) {
             setProgress(88, true);
-            statusEl.textContent = "Processing your files...";
+            statusEl.textContent = "Preparing your export...";
           }
         };
 
@@ -924,8 +924,8 @@
             setProgress(100, false);
             statusEl.textContent =
               files.length > 1
-                ? `Your ${outputFormat.value.toUpperCase()} ZIP is ready to download.`
-                : `Your ${outputFormat.value.toUpperCase()} file is ready to download.`;
+                ? `Your ${outputFormat.value.toUpperCase()} ZIP is ready.`
+                : `Your ${outputFormat.value.toUpperCase()} file is ready.`;
           } else {
             const reader = new FileReader();
             reader.onload = () => {
@@ -937,7 +937,7 @@
         };
 
         xhr.onerror = () => {
-          statusEl.textContent = "Something went wrong during conversion.";
+              statusEl.textContent = "Export failed. Please try again.";
           setProgress(0, false);
         };
 
