@@ -3,108 +3,225 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RAW to JPG Converter</title>
+    <title>Image to JPG Studio</title>
     <style>
       :root {
         color-scheme: light;
-        --bg: #0f172a;
-        --panel: rgba(255, 255, 255, 0.94);
-        --panel-border: rgba(148, 163, 184, 0.25);
+        --bg-1: #07111f;
+        --bg-2: #0f172a;
+        --panel: rgba(255, 255, 255, 0.9);
+        --panel-strong: rgba(255, 255, 255, 0.98);
+        --line: rgba(148, 163, 184, 0.18);
         --text: #0f172a;
-        --muted: #475569;
+        --muted: #5b6473;
         --accent: #0f766e;
-        --accent-strong: #115e59;
-        --shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+        --accent-2: #2563eb;
+        --accent-3: #f59e0b;
+        --shadow: 0 28px 90px rgba(15, 23, 42, 0.26);
       }
 
       * {
         box-sizing: border-box;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+      }
+
+      html,
+      body {
+        min-height: 100%;
       }
 
       body {
         margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
         background:
-          radial-gradient(circle at top left, rgba(20, 184, 166, 0.35), transparent 34%),
-          radial-gradient(circle at top right, rgba(59, 130, 246, 0.24), transparent 28%),
-          linear-gradient(160deg, #020617, #0f172a 48%, #111827);
+          radial-gradient(circle at top left, rgba(37, 99, 235, 0.34), transparent 30%),
+          radial-gradient(circle at 85% 12%, rgba(245, 158, 11, 0.22), transparent 20%),
+          radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.2), transparent 28%),
+          linear-gradient(160deg, var(--bg-1), var(--bg-2) 58%, #111827);
         color: var(--text);
+        padding: 24px;
       }
 
-      .container {
-        width: min(760px, 100%);
-        padding: 28px;
-        border-radius: 24px;
-        background: var(--panel);
-        border: 1px solid var(--panel-border);
+      .shell {
+        width: min(1180px, 100%);
+        margin: 0 auto;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 18px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .hero-card,
+      .side-card,
+      .main-card {
+        border: 1px solid var(--line);
         box-shadow: var(--shadow);
-        backdrop-filter: blur(14px);
+        backdrop-filter: blur(16px);
+      }
+
+      .hero-card {
+        padding: 28px;
+        border-radius: 28px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9));
       }
 
       .eyebrow {
-        display: inline-block;
-        padding: 6px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
         border-radius: 999px;
         background: rgba(15, 118, 110, 0.1);
-        color: var(--accent-strong);
+        color: var(--accent);
         font-size: 12px;
-        font-weight: 700;
+        font-weight: 800;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
       h1 {
-        margin: 16px 0 10px;
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        line-height: 1;
+        margin: 16px 0 12px;
+        font-size: clamp(2.2rem, 5vw, 4.5rem);
+        line-height: 0.96;
+        letter-spacing: -0.04em;
       }
 
-      p {
+      .lede {
         margin: 0;
+        max-width: 70ch;
         color: var(--muted);
-        line-height: 1.6;
+        font-size: 1.02rem;
+        line-height: 1.65;
       }
 
-      .grid {
+      .side-card {
+        padding: 22px;
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.84));
+      }
+
+      .side-title {
+        margin: 0 0 12px;
+        font-size: 0.92rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .stats {
         display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 24px;
-        margin-top: 28px;
+        gap: 12px;
       }
 
-      .card {
-        padding: 20px;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(148, 163, 184, 0.18);
+      .stat {
+        padding: 14px;
+        border-radius: 18px;
+        background: rgba(15, 23, 42, 0.04);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+      }
+
+      .stat strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 1rem;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+
+      .main-card {
+        margin-top: 18px;
+        padding: 22px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.94);
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 18px;
       }
 
       .dropzone {
-        border: 2px dashed rgba(17, 94, 89, 0.22);
-        border-radius: 20px;
-        padding: 22px;
-        background: rgba(15, 118, 110, 0.05);
+        position: relative;
+        border-radius: 24px;
+        border: 1.5px dashed rgba(15, 118, 110, 0.24);
+        background:
+          linear-gradient(180deg, rgba(15, 118, 110, 0.05), rgba(37, 99, 235, 0.03)),
+          rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        min-height: 280px;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
       }
 
-      .dropzone strong {
-        display: block;
-        margin-bottom: 8px;
+      .dropzone.is-dragover {
+        transform: scale(1.005);
+        border-color: rgba(37, 99, 235, 0.45);
+        background:
+          linear-gradient(180deg, rgba(37, 99, 235, 0.08), rgba(15, 118, 110, 0.07)),
+          white;
       }
 
-      .dropzone small {
+      .dropzone-top {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .dropzone-top strong {
         display: block;
-        margin-top: 6px;
+        font-size: 1.15rem;
+      }
+
+      .dropzone-top p {
+        margin: 6px 0 0;
         color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .tag {
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.05);
+        color: var(--muted);
+        font-size: 0.82rem;
+        border: 1px solid rgba(148, 163, 184, 0.15);
       }
 
       input[type="file"] {
         width: 100%;
         margin-top: 14px;
+        padding: 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: white;
+      }
+
+      .primary-actions {
+        display: grid;
+        gap: 12px;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
       }
 
       button,
@@ -112,19 +229,18 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 10px;
         width: 100%;
-        margin-top: 14px;
-        padding: 13px 16px;
+        padding: 14px 16px;
         border: 0;
-        border-radius: 14px;
-        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+        border-radius: 16px;
         color: white;
-        font-size: 15px;
-        font-weight: 700;
+        font-size: 0.98rem;
+        font-weight: 800;
         cursor: pointer;
         text-decoration: none;
-        transition: transform 0.18s ease, box-shadow 0.18s ease;
-        box-shadow: 0 14px 30px rgba(15, 118, 110, 0.28);
+        transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+        box-shadow: 0 16px 34px rgba(15, 118, 110, 0.24);
       }
 
       button:hover,
@@ -132,143 +248,467 @@
         transform: translateY(-1px);
       }
 
-      button:disabled {
-        opacity: 0.7;
+      button:disabled,
+      a.button-link[aria-disabled="true"] {
         cursor: not-allowed;
+        opacity: 0.7;
         transform: none;
       }
 
-      .preview-wrap {
-        display: grid;
-        gap: 14px;
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), #0f5f77);
       }
 
-      img {
-        width: 100%;
-        display: none;
-        border-radius: 16px;
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        background: white;
+      .btn-secondary {
+        background: linear-gradient(135deg, var(--accent-2), #1d4ed8);
+      }
+
+      .btn-ghost {
+        background: linear-gradient(135deg, #334155, #1f2937);
       }
 
       .status {
         min-height: 22px;
         color: var(--muted);
-        font-size: 14px;
+        font-size: 0.95rem;
       }
 
-      .hint-list {
-        margin: 16px 0 0;
-        padding-left: 18px;
+      .progress {
+        width: 100%;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(148, 163, 184, 0.18);
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        width: 0%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+        transition: width 0.2s ease;
+      }
+
+      .progress.processing .progress-bar {
+        background-size: 200% 100%;
+        animation: shimmer 1.1s linear infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 0% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .workspace {
+        display: grid;
+        gap: 16px;
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+      }
+
+      .file-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        background: white;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      .file-card .thumb {
+        aspect-ratio: 1 / 1;
+        width: 100%;
+        display: block;
+        object-fit: cover;
+        background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+      }
+
+      .file-meta {
+        padding: 12px;
+      }
+
+      .file-meta strong {
+        display: block;
+        font-size: 0.92rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .file-meta span {
+        display: block;
+        margin-top: 4px;
         color: var(--muted);
-        line-height: 1.8;
+        font-size: 0.84rem;
       }
 
-      .download-btn {
-        display: none;
+      .summary {
+        display: grid;
+        gap: 10px;
+        padding: 16px;
+        border-radius: 20px;
+        background: rgba(15, 23, 42, 0.04);
+        border: 1px solid rgba(148, 163, 184, 0.15);
       }
 
-      @media (max-width: 760px) {
-        .grid {
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .summary-row strong {
+        color: var(--text);
+      }
+
+      .download-note {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 920px) {
+        .hero,
+        .controls {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 14px;
+        }
+
+        .hero-card,
+        .main-card,
+        .side-card {
+          border-radius: 22px;
+        }
+
+        .button-row {
           grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
-    <main class="container">
-      <span class="eyebrow">RAW to JPG</span>
-      <h1>Convert camera RAW files to JPG</h1>
-      <p>
-        Upload CR2, RW2, NEF, ARW, SR2, ORF, PEF, RAF, or RAW files and convert them
-        into a downloadable JPG using Python.
-      </p>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-card">
+          <span class="eyebrow">Image converter</span>
+          <h1>Convert images to JPG with a polished batch workflow</h1>
+          <p class="lede">
+            Drop in one file or a whole set of photos. The app previews your selection,
+            converts common image formats and camera RAW files, and gives you a single JPG
+            or a ZIP when you upload multiple files.
+          </p>
+        </div>
 
-      <section class="grid">
-        <div class="card">
-          <div class="dropzone">
-            <strong>Select a RAW photo</strong>
-            <p>Choose one camera file from your device and convert it on the server.</p>
+        <aside class="side-card">
+          <h2 class="side-title">What it handles</h2>
+          <div class="stats">
+            <div class="stat">
+              <strong>Multiple files</strong>
+              <span>Select several images at once and download the results as a ZIP.</span>
+            </div>
+            <div class="stat">
+              <strong>Preview first</strong>
+              <span>See thumbnails instantly before you convert anything.</span>
+            </div>
+            <div class="stat">
+              <strong>Privacy-first</strong>
+              <span>Files are processed in memory and are not kept on disk.</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="main-card">
+        <div class="controls">
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone-top">
+              <div>
+                <strong>Choose files</strong>
+                <p>
+                  Add JPG, PNG, WebP, GIF, BMP, TIFF, HEIC, AVIF, and supported RAW files
+                  to convert them into JPG.
+                </p>
+              </div>
+            </div>
+
             <input
+              id="fileInput"
               type="file"
-              id="imageInput"
-              accept=".cr2,.rw2,.nef,.arw,.sr2,.orf,.pef,.raf,.raw,image/*"
+              multiple
+              accept=".jpg,.jpeg,.png,.gif,.bmp,.webp,.tif,.tiff,.heic,.heif,.avif,.ico,.jp2,.j2k,.jpf,.jpx,.ppm,.pgm,.pbm,.pnm,.cr2,.cr3,.rw2,.nef,.arw,.sr2,.orf,.pef,.raf,.raw,.dng,.x3f,.kdc,.mos,.mrw,.srw,image/*"
             />
-            <small>Supported RAW examples: CR2, RW2, NEF, ARW, SR2, ORF, PEF, RAF, RAW.</small>
+
+            <div class="tag-row" aria-label="Supported formats">
+              <span class="tag">JPG</span>
+              <span class="tag">PNG</span>
+              <span class="tag">WebP</span>
+              <span class="tag">GIF</span>
+              <span class="tag">BMP</span>
+              <span class="tag">TIFF</span>
+              <span class="tag">HEIC</span>
+              <span class="tag">AVIF</span>
+              <span class="tag">RAW</span>
+            </div>
+
+            <p class="download-note" id="fileHint">No files selected yet.</p>
           </div>
 
-          <button id="convertBtn">Convert to JPG</button>
-          <div class="status" id="status"></div>
-          <a id="downloadBtn" class="button-link download-btn" download="converted-image.jpg">
-            Download JPG
-          </a>
+          <div class="workspace">
+            <div class="primary-actions">
+              <div class="button-row">
+                <button class="btn-primary" id="convertBtn">Convert</button>
+                <button class="btn-ghost" id="clearBtn" type="button">Clear</button>
+              </div>
+              <a id="downloadBtn" class="button-link btn-secondary" aria-disabled="true" href="#">
+                Download result
+              </a>
+            </div>
+
+            <div class="progress" id="progressWrap" aria-label="Conversion progress">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="status" id="status">Ready when you are.</div>
+
+            <div class="summary" id="summary">
+              <div class="summary-row">
+                <span>Files selected</span>
+                <strong id="selectedCount">0</strong>
+              </div>
+              <div class="summary-row">
+                <span>Mode</span>
+                <strong id="modeLabel">Waiting</strong>
+              </div>
+              <div class="summary-row">
+                <span>Output</span>
+                <strong id="outputLabel">JPG or ZIP</strong>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="card preview-wrap">
-          <strong>Preview</strong>
-          <img id="preview" alt="Converted JPG preview" />
-          <p>
-            After conversion, the JPG appears here so you can confirm the result before
-            downloading.
-          </p>
-          <ul class="hint-list">
-            <li>Python handles the RAW decoding.</li>
-            <li>The browser only uploads the file and downloads the JPG.</li>
-            <li>This works as a small local web app or on a server.</li>
-          </ul>
-        </div>
+        <section style="margin-top: 18px">
+          <div class="side-title">Preview</div>
+          <div class="preview-grid" id="previewGrid"></div>
+        </section>
       </section>
     </main>
 
     <script>
-      const imageInput = document.getElementById("imageInput");
+      const fileInput = document.getElementById("fileInput");
+      const dropzone = document.getElementById("dropzone");
+      const previewGrid = document.getElementById("previewGrid");
+      const fileHint = document.getElementById("fileHint");
+      const selectedCount = document.getElementById("selectedCount");
+      const modeLabel = document.getElementById("modeLabel");
+      const outputLabel = document.getElementById("outputLabel");
       const convertBtn = document.getElementById("convertBtn");
-      const preview = document.getElementById("preview");
+      const clearBtn = document.getElementById("clearBtn");
       const downloadBtn = document.getElementById("downloadBtn");
       const statusEl = document.getElementById("status");
+      const progressWrap = document.getElementById("progressWrap");
+      const progressBar = document.getElementById("progressBar");
 
-      convertBtn.addEventListener("click", async () => {
-        const file = imageInput.files[0];
+      let objectUrls = [];
 
-        if (!file) {
-          statusEl.textContent = "Please select a RAW image first.";
+      function revokePreviews() {
+        objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        objectUrls = [];
+      }
+
+      function setProgress(value, processing = false) {
+        progressWrap.classList.toggle("processing", processing);
+        progressBar.style.width = `${Math.max(0, Math.min(100, value))}%`;
+      }
+
+      function setDownloadLink(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        downloadBtn.href = url;
+        downloadBtn.download = filename;
+        downloadBtn.setAttribute("aria-disabled", "false");
+      }
+
+      function resetDownloadLink() {
+        const oldHref = downloadBtn.href;
+        if (oldHref && oldHref.startsWith("blob:")) {
+          URL.revokeObjectURL(oldHref);
+        }
+        downloadBtn.href = "#";
+        downloadBtn.removeAttribute("download");
+        downloadBtn.setAttribute("aria-disabled", "true");
+      }
+
+      function renderPreview(files) {
+        revokePreviews();
+        previewGrid.innerHTML = "";
+        selectedCount.textContent = String(files.length);
+        modeLabel.textContent = files.length > 1 ? "Batch" : files.length === 1 ? "Single" : "Waiting";
+        outputLabel.textContent = files.length > 1 ? "ZIP" : "JPG";
+        fileHint.textContent =
+          files.length > 0
+            ? `${files.length} file${files.length === 1 ? "" : "s"} ready to convert.`
+            : "No files selected yet.";
+
+        files.forEach((file, index) => {
+          const url = URL.createObjectURL(file);
+          objectUrls.push(url);
+
+          const card = document.createElement("article");
+          card.className = "file-card";
+          card.innerHTML = `
+            <img class="thumb" alt="${file.name}" src="${url}" />
+            <div class="file-meta">
+              <strong title="${file.name}">${file.name}</strong>
+              <span>${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+            </div>
+          `;
+          previewGrid.appendChild(card);
+        });
+      }
+
+      function handleFiles(files) {
+        const list = Array.from(files || []);
+        renderPreview(list);
+        resetDownloadLink();
+        setProgress(0, false);
+        statusEl.textContent = list.length ? "Files loaded. Ready to convert." : "Ready when you are.";
+      }
+
+      fileInput.addEventListener("change", (event) => {
+        handleFiles(event.target.files);
+      });
+
+      clearBtn.addEventListener("click", () => {
+        fileInput.value = "";
+        handleFiles([]);
+        resetDownloadLink();
+      });
+
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropzone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          dropzone.classList.add("is-dragover");
+        });
+      });
+
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropzone.addEventListener(eventName, (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          dropzone.classList.remove("is-dragover");
+        });
+      });
+
+      dropzone.addEventListener("drop", (event) => {
+        const files = event.dataTransfer.files;
+        if (files && files.length) {
+          const transfer = new DataTransfer();
+          Array.from(files).forEach((file) => transfer.items.add(file));
+          fileInput.files = transfer.files;
+          handleFiles(files);
+        }
+      });
+
+      function convertFiles() {
+        const files = Array.from(fileInput.files || []);
+        if (!files.length) {
+          statusEl.textContent = "Please choose at least one file.";
           return;
         }
 
         const formData = new FormData();
-        formData.append("file", file);
+        files.forEach((file) => formData.append("files", file, file.name));
 
         convertBtn.disabled = true;
-        statusEl.textContent = "Converting...";
-        downloadBtn.style.display = "none";
-        preview.style.display = "none";
+        clearBtn.disabled = true;
+        resetDownloadLink();
+        setProgress(8, false);
+        statusEl.textContent =
+          files.length > 1
+            ? `Uploading ${files.length} files...`
+            : "Uploading file...";
 
-        try {
-          const response = await fetch("/convert", {
-            method: "POST",
-            body: formData,
-          });
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/convert", true);
+        xhr.responseType = "blob";
 
-          if (!response.ok) {
-            const message = await response.text();
-            throw new Error(message || "Conversion failed.");
+        xhr.upload.onprogress = (event) => {
+          if (!event.lengthComputable) {
+            return;
           }
 
-          const blob = await response.blob();
-          const objectUrl = URL.createObjectURL(blob);
+          const uploadPortion = Math.min(85, Math.max(8, (event.loaded / event.total) * 85));
+          setProgress(uploadPortion, false);
+          statusEl.textContent = `Uploading ${Math.round((event.loaded / event.total) * 100)}%...`;
+        };
 
-          preview.src = objectUrl;
-          preview.style.display = "block";
-          downloadBtn.href = objectUrl;
-          downloadBtn.download = "converted-image.jpg";
-          downloadBtn.style.display = "inline-flex";
-          statusEl.textContent = "Conversion complete.";
-        } catch (error) {
-          statusEl.textContent = error.message || "Something went wrong.";
-        } finally {
+        xhr.onloadstart = () => {
+          setProgress(8, false);
+        };
+
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === XMLHttpRequest.HEADERS_RECEIVED) {
+            setProgress(88, true);
+            statusEl.textContent = "Processing your files...";
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const blob = xhr.response;
+            const contentType = xhr.getResponseHeader("Content-Type") || "";
+            const filename =
+              contentType.includes("zip") || files.length > 1
+                ? "converted-images.zip"
+                : `${files[0].name.replace(/\.[^.]+$/, "")}.jpg`;
+
+            setDownloadLink(blob, filename);
+            setProgress(100, false);
+            statusEl.textContent =
+              files.length > 1
+                ? "Your ZIP is ready to download."
+                : "Your JPG is ready to download.";
+          } else {
+            const reader = new FileReader();
+            reader.onload = () => {
+              statusEl.textContent = reader.result || "Conversion failed.";
+            };
+            reader.readAsText(xhr.response);
+            setProgress(0, false);
+          }
+        };
+
+        xhr.onerror = () => {
+          statusEl.textContent = "Something went wrong during conversion.";
+          setProgress(0, false);
+        };
+
+        xhr.onloadend = () => {
           convertBtn.disabled = false;
-        }
-      });
+          clearBtn.disabled = false;
+        };
+
+        xhr.send(formData);
+      }
+
+      convertBtn.addEventListener("click", convertFiles);
+
+      handleFiles([]);
+      resetDownloadLink();
     </script>
   </body>
 </html>
